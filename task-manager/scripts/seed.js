@@ -45,43 +45,43 @@ async function seedUsers(client) {
 
     console.log(`Created "Tasks" table`);
 
-    const user = {
-        username: "Admin",
-        email: "admin@123",
-        password: "admin123",
-        created_at: getCurrentDateTimeFormatted()
-    }
+    // const user = {
+    //     username: "User",
+    //     email: "user1@123",
+    //     password: "admin123",
+    //     created_at: getCurrentDateTimeFormatted()
+    // }
 
     const task = {
-        user_id: user.id,
-        title: "Initial Task",
-        description: "This is the first task",
-        status: 'pending',
+        user_id: 4,
+        title: "task 4 Task",
+        description: "This is the dvs5th task",
+        status: 'Pending',
         due_date: new Date('2024-09-30'),
         created_at: getCurrentDateTimeFormatted(),
         updated_at: getCurrentDateTimeFormatted()
     };
 
     // Insert data into the "users" and "tasks" table
-    const hashedPassword = await bcrypt.hash(user.password, 10);
-    const insertedUser = await client.sql`
-        INSERT INTO kanban_users (username, email, password, created_at)
-        VALUES (${user.username}, ${user.email}, ${hashedPassword}, ${user.created_at})
-        ON CONFLICT (id) DO NOTHING;
-        `;
+    // const hashedPassword = await bcrypt.hash(user.password, 10);
+    // const insertedUser = await client.sql`
+    //     INSERT INTO kanban_users (username, email, password, created_at)
+    //     VALUES (${user.username}, ${user.email}, ${hashedPassword}, ${user.created_at})
+    //     ON CONFLICT (id) DO NOTHING;
+    //     `;
 
     const insertedTask = await client.sql`
         INSERT INTO kanban_tasks (user_id, title, description, status, created_at, updated_at)
-        VALUES (${user.id}, ${task.title}, ${task.description}, ${task.status},${task.created_at}, ${task.updated_at})
+        VALUES (${task.user_id}, ${task.title}, ${task.description}, ${task.status},${task.created_at}, ${task.updated_at})
         ON CONFLICT (id) DO NOTHING;
         `;
 
     console.log(`Created Amin User users`);
 
     return {
-      createUsersTable,
-      createTasksTable,
-      insertedUser,
+    //   createUsersTable,
+    //   createTasksTable,
+    //   insertedUser,
       insertedTask
     };
   } catch (error) {

@@ -15,7 +15,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Task Manager Application",
-  description: "Technical Assessment",
+  description: "Tracking tasks that ",
 };
 
 export default function RootLayout({

@@ -1,110 +1,59 @@
-'use server';
+"use server";
+import { sql } from "@vercel/postgres";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { Task, User } from "./definitions";
 
-import { z } from 'zod';
-import { sql } from '@vercel/postgres';
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
-import { signIn } from '@/auth';
-import { AuthError } from 'next-auth';
+const { db } = require("@vercel/postgres");
+const bcrypt = require("bcrypt");
 
-export type State = {
-  errors?: {
-    customerId?: string[];
-    amount?: string[];
-    status?: string[];
-  };
-  message?: string | null;
-};
-
-export async function createInvoice(prevState: State, formData: FormData) {
-
-  // If form validation fails, return errors early. Otherwise, continue.
-//   if (!validatedFields.success) {
-//     return {
-//       errors: validatedFields.error.flatten().fieldErrors,
-//       message: 'Missing Fields. Failed to Create Invoice.',
-//     };
-//   }
-
-  const { customerId, amount, status } = validatedFields.data;
-  const amountInCents = amount * 100;
-  const date = new Date().toISOString().split('T')[0];
-
-  try {
-    await sql`
-      INSERT INTO invoices (customer_id, amount, status, date)
-      VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
-    `;
-  } catch (error) {
-    return {
-      message: 'Database Error: Failed to Create Invoice.',
-    };
-  }
-
-  revalidatePath('/dashboard/invoices');
-  redirect('/dashboard/invoices');
+export const getCurrentDateTimeFormatted = () => {
+  const now = new Date();
+  
+  return now.toISOString().slice(0, 19).replace('T', ' ');
 }
 
-export async function updateInvoice(
-  id: string,
-  prevState: State,
-  formData: FormData,
-) {
-  const validatedFields = UpdateInvoice.safeParse({
-    customerId: formData.get('customerId'),
-    amount: formData.get('amount'),
-    status: formData.get('status'),
-  });
+import { ITask } from "../../interfaces/tasks";
 
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Missing Fields. Failed to Update Invoice.',
-    };
-  }
+const baseUrl = 'http://localhost:3002';
 
-  const { customerId, amount, status } = validatedFields.data;
-  const amountInCents = amount * 100;
-
-  try {
-    await sql`
-        UPDATE invoices
-        SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
-        WHERE id = ${id}
-      `;
-  } catch (error) {
-    return { message: 'Database Error: Failed to Update Invoice.' };
-  }
-
-  revalidatePath('/dashboard/invoices');
-  redirect('/dashboard/invoices');
+export const getAllTasks = async (): Promise<ITask[]> => {
+  const res = await fetch(`${baseUrl}/api/task`, { cache: 'no-store' });
+  const tasks = await res.json();
+  return tasks;
 }
 
-export async function deleteInvoice(id: string) {
-  try {
-    await sql`DELETE FROM invoices WHERE id = ${id}`;
-    revalidatePath('/dashboard/invoices');
-    return { message: 'Deleted Invoice.' };
-  } catch (error) {
-    return { message: 'Database Error: Failed to Delete Invoice.' };
-  }
+export const addTask = async (task: ITask): Promise<ITask> => {
+  console.log("Endpoint Attemp to ADD TASK 1")
+
+  console.log(task)
+  const res = await fetch(`${baseUrl}/api/task`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(task)
+  })
+
+  const newTodo = await res.json();
+  console.log(newTodo)
+  return newTodo;
 }
 
-export async function authenticate(
-  prevState: string | undefined,
-  formData: FormData,
-) {
-  try {
-    await signIn('credentials', formData);
-  } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return 'Invalid credentials.';
-        default:
-          return 'Something went wrong.';
-      }
-    }
-    throw error;
-  }
+export const editTask = async (task: ITask): Promise<ITask> => {
+  const res = await fetch(`${baseUrl}/tasks/${task.id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(task)
+  })
+  const updatedTodo = await res.json();
+  return updatedTodo;
+}
+
+export const deleteTask = async (id: string): Promise<void> => {
+  await fetch(`${baseUrl}/api/task/${id}`, {
+    method: 'DELETE',
+  })
 }
