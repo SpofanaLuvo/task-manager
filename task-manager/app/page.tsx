@@ -4,6 +4,7 @@ import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { registerUser, loginUser } from "./client_lib/user_actions";
+import Header from "./components/Header";
 
 import { useAuthStore } from "@/store/store";
 
@@ -62,8 +63,8 @@ export default function Home() {
   };
 
   return (
-    <main className="max-w-4xl mx-auto mt-4">
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <main className="max-w-6xl mx-auto bg-green ">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
           <h2 className="text-2xl font-bold mb-6 text-center">
             {isSignUp ? "Sign Up" : "Sign In"}
@@ -121,7 +122,7 @@ export default function Home() {
             )}
             <button
               type="submit"
-              className="w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
+              className="w-full px-4 py-2 font-semibold text-white bg-blue-900 rounded-md hover:bg-blue-900 focus:outline-none focus:bg-blue-700"
             >
               {isSignUp ? "Sign Up" : "Sign In"}
             </button>

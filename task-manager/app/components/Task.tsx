@@ -8,11 +8,8 @@ import { deleteTask, editTask } from "../client_lib/task_actions";
 import { AiOutlinePlus } from "react-icons/ai";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 
-interface TaskProps {
-  task: ITask;
-}
 
-const Task: React.FC<TaskProps> = ({ task }) => {
+const Task: React.FC<any> = ({ task }) => {
   const router = useRouter();
   const [openModalEdit, setOpenModalEdit] = useState<boolean>(false);
   const [openModalDeleted, setOpenModalDeleted] = useState<boolean>(false);
@@ -54,7 +51,13 @@ const Task: React.FC<TaskProps> = ({ task }) => {
 
   return (
     <tr key={task.id}>
+      <td >{task.id}</td>
+      <td className='w-full'>{task.title}</td>
       <td className='w-full'>{task.description}</td>
+      <td className='w-full'>{task.status}</td>
+      <td className='w-full'>{task.due_date}</td>
+      <td className='w-full'>{task.created_at}</td>
+      <td className='w-full'>{task.updated_at}</td>
       <td className='flex gap-5'>
         <FiEdit
           onClick={() => setOpenModalEdit(true)}
@@ -113,7 +116,7 @@ const Task: React.FC<TaskProps> = ({ task }) => {
               </label>
               <button
                 type="submit"
-                className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 focus:bg-indigo-700"
+                className="w-full bg-gray-900 text-gray-100 hover:text-gray-900 hover:bg-gray-100 py-2 rounded-md"
               >
                 Submit
               </button>
