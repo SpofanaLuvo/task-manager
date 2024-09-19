@@ -2,12 +2,18 @@
 
 import AddTask from "../components/AddTask";
 import TodoList from "../components/TodoList";
-import { getAllTasks } from "../lib/actions";
+import { getAllTasks } from "../client_lib/task_actions";
 import { useState, useEffect } from "react";
+
+import { useAuthStore } from "@/store/store";
+import { stat } from "fs";
 
 export default function Home() {
   const [tasks, setTasks] = useState([]);
 
+  const user = useAuthStore((state: any) => state.user)
+  console.log(user);
+     
   useEffect(() => {
     const fetchTasks = async () => {
       try {

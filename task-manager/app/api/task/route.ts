@@ -1,18 +1,12 @@
 import { NextResponse } from "next/server";
 import {
   queryCreateTask,
-  queryGetTaskById,
-  queryDeleteTask,
   queryAllTasks,
-  queryGetUser,
-  queryUpdateTask
-} from "@/server_lib/actions";
+} from "@/app/server_lib/task_queries";
 
 // TASKS Handlers
 export async function GET() {
   const tasks = await queryAllTasks();
-  
-  console.log(NextResponse.json(tasks))
 
   return tasks ? NextResponse.json(tasks) : NextResponse.json(
     { message: "Could not fetch tasks" },
@@ -22,13 +16,9 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    console.log("Endpoint: Attempt to create a task");
     const data = await request.json();
-    console.log(data)
     const task = await queryCreateTask(data);
 
-    console.log(task)
-    
     if (task) {
       return NextResponse.json({ task });
     } else {

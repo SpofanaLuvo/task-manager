@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
-import {createUser, getUser } from '../../lib/actions'
+import {
+queryGetUser,
+queryCreateUser
+} from "@/app/server_lib/user_queries";
 
 // USERS Handlers
 
 export async function GET(request : Request) {
     const data = await request.json()
-    const user = await getUser(data);
+    const user = await queryGetUser(data);
     if (user) {
         return NextResponse.json({ user });
     } else {
@@ -15,7 +18,7 @@ export async function GET(request : Request) {
 
 export async function POST(request : Request) {
     const data = await request.json();
-    const user = await createUser(data);
+    const user = await queryCreateUser(data);
     if (user) {
         return NextResponse.json({ user });
     } else {

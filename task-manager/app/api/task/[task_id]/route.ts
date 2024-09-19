@@ -1,21 +1,13 @@
 import { NextResponse } from "next/server";
 import {
-  queryCreateTask,
-  queryGetTaskById,
   queryDeleteTask,
-  queryAllTasks,
-  queryGetUser,
   queryUpdateTask
-} from "@/server_lib/actions";
+} from "@/app/server_lib/task_queries";
 
 export async function DELETE(request: Request, context: any) {
-    console.log("Enpoint: attempt to DELETE a task")
     const { params } = context;
-
-    console.log(context)
     const task_id = params.task_id.toString();
 
-    console.log(`Deleting task with id: ${task_id}`);
     const success = await queryDeleteTask(task_id);
     if (success) {
       return NextResponse.json({ message: "Task deleted successfully" });
@@ -27,10 +19,14 @@ export async function DELETE(request: Request, context: any) {
     }
   }
 
-  export async function PUT(request: Request) {
-    console.log("Endpoint: attempt to UPDATE a task")
-    const { id, ...data } = await request.json();
-    const task = await queryUpdateTask(id, data);
+  export async function PUT(request: Request, context: any) {
+    const { params } = context;
+
+    const task_id = params.task_id.toString();
+    const updatedTask = await request.json();
+
+    const task = await queryUpdateTask(task_id, updatedTask);
+
     if (task) {
       return NextResponse.json({ task });
     } else {

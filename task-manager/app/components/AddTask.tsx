@@ -3,7 +3,7 @@
 import { AiOutlinePlus } from "react-icons/ai";
 import Modal from "./Modal";
 import { FormEventHandler, useState } from "react";
-import { getCurrentDateTimeFormatted, addTask } from "../lib/actions";
+import { getCurrentDateTimeFormatted, addTask } from "../client_lib/task_actions";
 import { useRouter } from "next/navigation";
 
 const AddTask = () => {

@@ -15,7 +15,7 @@ export const getCurrentDateTimeFormatted = () => {
 
 import { ITask } from "../../interfaces/tasks";
 
-const baseUrl = 'http://localhost:3002';
+const baseUrl = 'http://localhost:3000';
 
 export const getAllTasks = async (): Promise<ITask[]> => {
   const res = await fetch(`${baseUrl}/api/task`, { cache: 'no-store' });
@@ -36,17 +36,18 @@ export const addTask = async (task: ITask): Promise<ITask> => {
   })
 
   const newTodo = await res.json();
-  console.log(newTodo)
   return newTodo;
 }
 
-export const editTask = async (task: ITask): Promise<ITask> => {
-  const res = await fetch(`${baseUrl}/tasks/${task.id}`, {
+export const editTask = async (task_id: ITask, updated_task: any): Promise<ITask> => {
+  console.log("Task update fetch")
+  console.log(task_id, updated_task)
+  const res = await fetch(`${baseUrl}/api/task/${task_id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(task)
+    body: JSON.stringify(updated_task)
   })
   const updatedTodo = await res.json();
   return updatedTodo;

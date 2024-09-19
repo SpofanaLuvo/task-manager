@@ -1,13 +1,14 @@
-'use client'
+"use client";
 
-import { getAllTodos } from "@/api";
-import AddTask from "./components/AddTask";
-import TodoList from "./components/TodoList";
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
+import { registerUser, loginUser } from "./client_lib/user_actions";
+
+import { useAuthStore } from "@/store/store";
 
 export default function Home() {
+
   const { push } = useRouter();
   const [isSignUp, setIsSignUp] = useState(false);
 
@@ -15,60 +16,96 @@ export default function Home() {
     setIsSignUp(!isSignUp);
   };
 
+   // const router = useRouter();
+   const user = useAuthStore((state) => state.user);
+   const updateUser = useAuthStore((state) => state.updateUser);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const payload = {
-      username: event.currentTarget.username.value,
+      email: event.currentTarget.email.value,
       password: event.currentTarget.password.value,
+      ...(isSignUp && {
+        username: event.currentTarget.username.value,
+        confirmPassword: event.currentTarget.confirmPassword.value,
+      }),
     };
 
     try {
-      const { data } = await axios.post("/api/auth/login", payload);
+      const data = isSignUp
+        ? await registerUser(payload)
+        : await loginUser(payload);
 
-      alert(JSON.stringify(data));
+        console.log(data)
 
-      // redirect the user to /dashboard
-      push("/dashboard");
-    } catch (e) {
-      const error = e as AxiosError;
+      if (data.error) {
+        push("/");
+      }     
 
-      alert(error.message);
+      if (data.user) {
+        console.log("Logged in user:", data.user);
+        
+        // Set the logged in user in the store
+        updateUser(data.user);
+        
+        console.log("--------------------");
+        console.log("State after logging in:", user);
+        
+        // Navigate to the tasks page
+        push("/tasks");
+      }
+      
+    } catch (error) {
+      push("/");
     }
   };
 
   return (
-    <main className='max-w-4xl mx-auto mt-4'>
-            <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">
-          {isSignUp ? 'Sign Up' : 'Sign In'}
-        </h2>
+    <main className="max-w-4xl mx-auto mt-4">
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+          <h2 className="text-2xl font-bold mb-6 text-center">
+            {isSignUp ? "Sign Up" : "Sign In"}
+          </h2>
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div>
-            <label className="block text-gray-700">Username</label>
-            <input
-              type="text"
-              className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
-              placeholder="Enter your username"
-              id="username"
-              name="username"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-gray-700">Password</label>
-            <input
-              type="password"
-              className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
-              placeholder="Enter your password"
-              id="password"
-              name="password"
-              required
-            />
-          </div>
-          <div>
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {isSignUp && (
+              <div>
+                <label className="block text-gray-700">Username</label>
+                <input
+                  type="text"
+                  className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                  placeholder="Enter your username"
+                  id="username"
+                  name="username"
+                  required={isSignUp}
+                />
+              </div>
+            )}
+
+            <div>
+              <label className="block text-gray-700">Email</label>
+              <input
+                type="email"
+                className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                placeholder="Enter your email address"
+                id="email"
+                name="email"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700">Password</label>
+              <input
+                type="password"
+                className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                placeholder="Enter your password"
+                id="password"
+                name="password"
+                required
+              />
+            </div>
             {isSignUp && (
               <div>
                 <label className="block text-gray-700">Confirm Password</label>
@@ -76,31 +113,30 @@ export default function Home() {
                   type="password"
                   className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
                   placeholder="Confirm your password"
-                  required
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  required={isSignUp}
                 />
               </div>
             )}
-          </div>
-          <button
-            type="submit"
-            className="w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
-          >
-            {isSignUp ? 'Sign Up' : 'Sign In'}
-          </button>
-        </form>
-        <p className="mt-4 text-center text-gray-600">
-          {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-          <button
-            onClick={toggleForm}
-            className="text-blue-600 hover:underline focus:outline-none"
-          >
-            {isSignUp ? 'Sign In' : 'Sign Up'}
-          </button>
-        </p>
+            <button
+              type="submit"
+              className="w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
+            >
+              {isSignUp ? "Sign Up" : "Sign In"}
+            </button>
+          </form>
+          <p className="mt-4 text-center text-gray-600">
+            {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
+            <button
+              onClick={toggleForm}
+              className="text-blue-600 hover:underline focus:outline-none"
+            >
+              {isSignUp ? "Sign In" : "Sign Up"}
+            </button>
+          </p>
+        </div>
       </div>
-    </div>
     </main>
   );
 }
-
-

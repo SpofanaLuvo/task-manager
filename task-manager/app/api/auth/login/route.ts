@@ -1,53 +1,50 @@
-import { COOKIE_NAME } from "@/constants";
-import { serialize } from "cookie";
-import { sign } from "jsonwebtoken";
+import { sign as jwtSign } from "jsonwebtoken";
 import { NextResponse } from "next/server";
+import { queryGetUser } from "@/app/server_lib/user_queries"; // Assuming queryRegisterUser is not needed here
+import bcrypt from "bcrypt";
 
-const MAX_AGE = 60 * 60 * 24 * 30; // days;
+const MAX_AGE = 60 * 60 * 24 * 30; // 30 days in seconds
 
 export async function POST(request: Request) {
   const body = await request.json();
+  const { email, password } = body;
 
-  const { username, password } = body;
-
-  if (username !== "admin" || password !== "admin") {
+  if (!email || !password) {
     return NextResponse.json(
-      {
-        message: "Unauthorized",
-      },
-      {
-        status: 401,
-      }
+      { message: "User login failed. All fields are required" },
+      { status: 401 }
     );
   }
 
-  // Always check this
-  const secret = process.env.JWT_SECRET || "";
+  const userResult = await queryGetUser(email);
 
-  const token = sign(
-    {
-      username,
-    },
-    secret,
-    {
-      expiresIn: MAX_AGE,
+  if (userResult) {
+    const user = userResult;
+
+    if (await bcrypt.compare(password, user.password)) {
+      const token = generateToken(user.id);
+
+      return NextResponse.json(
+        {
+          message: {
+            id: user.id,
+            name: user.username,
+            email: user.email,
+            token,
+          },
+        },
+        { status: 200 }
+      );
     }
+  }
+
+  return NextResponse.json(
+    { message: "User login failed. Invalid user data" },
+    { status: 400 }
   );
-
-  const seralized = serialize(COOKIE_NAME, token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: MAX_AGE,
-    path: "/",
-  });
-
-  const response = {
-    message: "Authenticated!",
-  };
-
-  return new Response(JSON.stringify(response), {
-    status: 200,
-    headers: { "Set-Cookie": seralized },
-  });
 }
+
+const generateToken = (userId:any) => {
+  const secret = process.env.JWT_SECRET || "";
+  return jwtSign({ userId }, secret, { expiresIn: MAX_AGE });
+};
