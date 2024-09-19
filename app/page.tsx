@@ -1,25 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback} from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { registerUser, loginUser } from "./client_lib/user_actions";
 import Header from "./components/Header";
 
-import { useAuthStore } from "@/store/store";
+import useAuthStore from "@/store/authStore";
 
 export default function Home() {
 
   const { push } = useRouter();
   const [isSignUp, setIsSignUp] = useState(false);
+  const login = useAuthStore((state) => state.login);
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const refreshAccessToken = useAuthStore((state) => state.refreshAccessToken);
 
-  const toggleForm = () => {
-    setIsSignUp(!isSignUp);
-  };
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    // Manages the component mount state to ensure client-side only logic
+    setMounted(true);
+  }, []);
 
-   // const router = useRouter();
-   const user = useAuthStore((state) => state.user);
-   const updateUser = useAuthStore((state) => state.updateUser);
+  const toggleForm = useCallback(() => {
+    setIsSignUp((prev) => !prev);
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -33,33 +39,50 @@ export default function Home() {
       }),
     };
 
-    try {
-      const data = isSignUp
-        ? await registerUser(payload)
-        : await loginUser(payload);
-
-        console.log(data)
-
-      if (data.error) {
-        push("/");
-      }     
-
-      if (data.user) {
-        console.log("Logged in user:", data.user);
-        
-        // Set the logged in user in the store
-        updateUser(data.user);
-        
-        console.log("--------------------");
-        console.log("State after logging in:", user);
-        
-        // Navigate to the tasks page
-        push("/tasks");
-      }
-      
-    } catch (error) {
-      push("/");
+    const userEmail = event.currentTarget.email.value;
+    const userPassword = event.currentTarget.password.value;
+    
+    let success;
+    if (isSignUp) {
+      // Implement your sign-up logic here
+      // success = await registerUser({ email, password, ... });
+    } else {
+      success = await login(userEmail, userPassword);
     }
+
+    if (success) {
+      push('/tasks');
+    } else {
+      alert('Authentication failed');
+    }
+
+    // try {
+    //   const data = isSignUp
+    //     ? await registerUser(payload)
+    //     : await loginUser(payload);
+
+    //     console.log(data)
+
+    //   if (data.error) {
+    //     push("/");
+    //   }     
+
+    //   if (data.user) {
+    //     console.log("Logged in user:", data.user);
+        
+    //     // Set the logged in user in the store
+    //     updateUser(data.user);
+        
+    //     console.log("--------------------");
+    //     console.log("State after logging in:", user);
+        
+    //     // Navigate to the tasks page
+    //     push("/tasks");
+    //   }
+      
+    // } catch (error) {
+    //   push("/");
+    // }
   };
 
   return (
