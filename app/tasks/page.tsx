@@ -14,29 +14,35 @@ export default function Tasks() {
 
   const accessToken = useAuthStore((state) => state.accessToken); 
   const refreshAccessToken = useAuthStore((state) => state.refreshAccessToken);
+  const user = useAuthStore((state) => state.user);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!accessToken) {
-        const refreshed = await refreshAccessToken();
-        if (!refreshed) {
-          router.push('/'); 
-          return;
-        }
+  console.log("User from the store")
+
+  console.log(user)
+  console.log("User from the store")
+
+useEffect(() => {
+  const fetchData = async () => {
+    if (!accessToken && refreshAccessToken) {
+      const refreshed = await refreshAccessToken();
+      if (!refreshed) {
+        router.push('/'); 
+        return;
       }
+    }
 
-      try {
-        const data = await getAllTasks();
-        setTasks(data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-        setLoading(false);
-      }
-    };
+    try {
+      const data = await getAllTasks(user);
+      setTasks(data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+      setLoading(false);
+    }
+  };
 
-    fetchData();
-  }, [accessToken, refreshAccessToken, router]);
+  fetchData();
+}, [accessToken, refreshAccessToken, router, user]);
 
   if (loading) {
     return <div>Loading...</div>;

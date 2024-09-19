@@ -44,36 +44,43 @@ export async function POST(request: Request) {
       const accessToken = generateAccessToken(email);
       const refreshToken = generateRefreshToken(email);
       
-      return NextResponse.json(
+      const response = NextResponse.json(
         {
           message: {
             id: user.id,
             name: user.username,
             email: user.email,
           },
+          accessToken,
+          refreshToken,
         },
         {
           status: 200,
-          headers: {
-            'Set-Cookie': [
-              serialize('access-token', accessToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV !== 'development',
-                sameSite: 'strict',
-                maxAge: 15 * 60, // 15 minutes
-                path: '/',
-              }),
-              serialize('refresh-token', refreshToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV !== 'development',
-                sameSite: 'strict',
-                maxAge: REFRESH_TOKEN_EXPIRY, // 30 days
-                path: '/',
-              }),
-            ],
-          },
         }
       );
+
+      response.headers.set('Set-Cookie', [
+        serialize('access-token', accessToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV !== 'development',
+          sameSite: 'strict',
+          maxAge: 15 * 60, // 15 minutes
+          path: '/',
+        }),
+        serialize('refresh-token', refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV !== 'development',
+          sameSite: 'strict',
+          maxAge: REFRESH_TOKEN_EXPIRY, // 30 days
+          path: '/',
+        }),
+      ].join(', '));
+
+      console.log("ENDPOINT RESPONSE")
+      console.log(response)
+      console.log("ENDPOINT RESPONSE")
+
+      return response;
     }
 
     return NextResponse.json(

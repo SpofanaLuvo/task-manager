@@ -5,23 +5,28 @@ import { persist } from "zustand/middleware";
 const useAuthStore = create((set: any, get: any) => ({
   accessToken: null,
   refreshToken: null,
+  user: null,
 
   setAccessToken: (token: string | null) => set({ accessToken: token }),
+  setUser: (user: any | null) => set({ user }),
 
   login: async (email: string, password: string) => {
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: 'include', // ensure cookies are sent with the request
         body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
-
+     
       if (res.ok) {
+
         set({
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
+          user: data.message
         });
         return true;
       } else {
@@ -40,7 +45,7 @@ const useAuthStore = create((set: any, get: any) => ({
         method: 'POST',
         credentials: 'include', // make sure cookies are included
       });
-      set({ accessToken: null, refreshToken: null });
+      set({ accessToken: null, refreshToken: null, user: null});
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -62,7 +67,6 @@ const useAuthStore = create((set: any, get: any) => ({
         
         set({ accessToken: null });
         console.error('Refresh token failed:', data.message);
-        return false;
         return false;
       }
     } catch (error) {

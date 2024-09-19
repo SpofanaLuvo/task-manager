@@ -3,11 +3,12 @@
 import { sql } from "@vercel/postgres";
 import { TaskCreate, User } from "../client_lib/definitions";
 
-export async function queryAllTasks() {
+export async function queryAllTasks(user_id: string) {
   try {
     const tasks = await sql`
-              SELECT * FROM kanban_tasks
-          `;
+      SELECT * FROM kanban_tasks
+      WHERE user_id = ${user_id}
+    `;
     return tasks.rows;
   } catch (error) {
     console.error("Database Error: Failed to Read Tasks:", error);

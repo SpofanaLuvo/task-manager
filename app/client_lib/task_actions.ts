@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { Task, User } from "./definitions";
 
-const { db } = require("@vercel/postgres");
 const bcrypt = require("bcrypt");
 
 export const getCurrentDateTimeFormatted = () => {
@@ -13,48 +12,90 @@ export const getCurrentDateTimeFormatted = () => {
   return now.toISOString().slice(0, 19).replace('T', ' ');
 }
 
-import { ITask } from "../../interfaces/tasks";
-
 const baseUrl = 'http://localhost:3000';
 
-export const getAllTasks = async (): Promise<ITask[]> => {
-  const res = await fetch(`${baseUrl}/api/task`, { cache: 'no-store' });
+export const getAllTasks = async (user: any): Promise<any> => {
+  console.log("-----------------------")
+  console.log(user)
+  const res = await fetch(`${baseUrl}/api/task`, { 
+    method: 'GET',
+    cache: 'no-store',
+    headers: {
+      'Authorization': `Bearer ${user.accessToken}`,
+    }
+  });
+
+  console.log("-----------------------")
+
+
+  // console.log(res.json())
+  console.log("-----------------------")
+  
+
+  if (!res.ok) {
+    throw new Error(`An error occurred: ${res.statusText}`);
+  }
+
   const tasks = await res.json();
   return tasks;
 }
 
-export const addTask = async (task: ITask): Promise<ITask> => {
-  console.log("Endpoint Attemp to ADD TASK 1")
+export const addTask = async (user: any, task: any): Promise<any> => {
+  console.log("Endpoint Attempt to ADD TASK");
 
-  console.log(task)
+  const taskWithUserId = { ...task, user_id: user.user_id };
+
   const res = await fetch(`${baseUrl}/api/task`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${user.token}`
     },
-    body: JSON.stringify(task)
-  })
+    body: JSON.stringify(taskWithUserId)
+  });
 
-  const newTodo = await res.json();
-  return newTodo;
+  if (!res.ok) {
+    throw new Error(`An error occurred: ${res.statusText}`);
+  }
+
+  const newTask = await res.json();
+  return newTask;
 }
 
-export const editTask = async (task_id: ITask, updated_task: any): Promise<ITask> => {
-  console.log("Task update fetch")
-  console.log(task_id, updated_task)
+export const editTask = async (user: any, task_id: string, updated_task: any): Promise<any> => {
+  console.log("Task update fetch");
+
+  const updatedTaskWithUserId = { ...updated_task, user_id: user.user_id };
+
+  console.log(task_id, updatedTaskWithUserId);
   const res = await fetch(`${baseUrl}/api/task/${task_id}`, {
     method: 'PUT',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${user.token}`
     },
-    body: JSON.stringify(updated_task)
-  })
-  const updatedTodo = await res.json();
-  return updatedTodo;
+    body: JSON.stringify(updatedTaskWithUserId)
+  });
+
+  if (!res.ok) {
+    throw new Error(`An error occurred: ${res.statusText}`);
+  }
+
+  const updatedTask = await res.json();
+  return updatedTask;
 }
 
-export const deleteTask = async (id: string): Promise<void> => {
-  await fetch(`${baseUrl}/api/task/${id}`, {
+export const deleteTask = async (user: any, id: string): Promise<void> => {
+  console.log("Attempting to delete task");
+
+  const res = await fetch(`${baseUrl}/api/task/${id}`, {
     method: 'DELETE',
-  })
+    headers: {
+      'Authorization': `Bearer ${user.token}`
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(`An error occurred: ${res.statusText}`);
+  }
 }
