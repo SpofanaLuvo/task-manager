@@ -39,7 +39,7 @@ export async function POST(request: Request) {
 
     const user = userResult;
 
-    if (await bcrypt.compare(password, user.password)) {
+    if (password === user.password) {
       const accessToken = generateAccessToken(email);
       const refreshToken = generateRefreshToken(email);
       

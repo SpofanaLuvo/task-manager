@@ -12,8 +12,6 @@ const generateAccessToken = (email: string) => {
 };
 
 export async function POST(request: Request) {
-  console.log("REFRESHHHHHH HIT")
-
   const cookieHeader = request.headers.get('cookie') || '';
   const cookies = Object.fromEntries(cookieHeader.split('; ').map(c => c.split('=')));
   const refreshToken = cookies['refresh-token'];

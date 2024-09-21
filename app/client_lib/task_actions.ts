@@ -3,7 +3,7 @@ import apiClient from "@/apiClient"; // Ensure this path is correct for your set
 
 export const getAllTasks = async (user_id: any) => {
   try {
-    const res = await apiClient.get(`/api/task?user_id=${user_id}`, {
+    const res = await apiClient.get(`/api/user_tasks/${user_id}`, {
       withCredentials: true,
     });
 

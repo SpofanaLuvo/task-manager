@@ -6,8 +6,12 @@ import AddTask from '../components/AddTask';
 import TodoList from '../components/TodoList';
 import useAuthStore from '@/store/authStore';
 import apiClient from '@/apiClient';
+import { getAllTasks } from '../client_lib/task_actions';
+
+// export const revalidate = 60;
 
 const Tasks = () => {
+  
   const user = useAuthStore((state) => state.user);
   const accessToken = useAuthStore((state) => state.accessToken); 
   const refreshAccessToken = useAuthStore((state) => state.refreshAccessToken);
@@ -19,33 +23,30 @@ const Tasks = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       // Ensure that we have the necessary information before fetching tasks
-      if (!user || !accessToken) {
-        console.log("JJDBUSDUSHDUIHSGU");
-        return; 
-      } 
+      // if (!user || !accessToken) {
+      //   console.log("JJDBUSDUSHDUIHSGU");
+      //   return; 
+      // } 
 
       if (!accessToken && refreshAccessToken) {
         const refreshed = await refreshAccessToken();
         if (!refreshed) {
-          alert("Logged out, logging you back in");
           router.push('/');
           return;
         }
       }
 
+      setLoading(false);
+
       try {
-        const res = await apiClient.get(`/api/user_tasks/${user.id}`, {
-          withCredentials: true,
-        });
+       
+        const returnedData = await getAllTasks(user.id)
 
         console.log("fetchingggg")
+        console.log(returnedData)
 
-        if (res.status === 200) {
-          setTasks(res.data);
-          console.log(res.data);
-        } else {
-          console.error("Error fetching tasks:", res.statusText);
-        }
+        setTasks(returnedData)
+
       } catch (error) {
         console.error("Error fetching tasks:", error);
       } finally {

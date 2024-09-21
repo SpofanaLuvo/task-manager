@@ -2,27 +2,39 @@
 
 import { sql } from "@vercel/postgres";
 import { TaskCreate, User } from "../client_lib/definitions";
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 export async function queryAllTasks(user_id: string) {
   try {
     const tasks = await sql`
-      SELECT * FROM kanban_tasks
+      SELECT * FROM tasks
       WHERE user_id = ${user_id}
     `;
-console.log("ROWSSSSSSS")
-    console.log(tasks.rows)
-    console.log("ROWSSSSSSS")
+    console.log("QUERY EXECUTED HERE --------------------")
+    // console.log(tasks.rows)
+    console.log("------------------------------")
+
+    if (tasks.rowCount > 0) {
+      console.log("Tasks retrieved:", tasks);
+    } else {
+      console.log("No tasks found for user id:", user_id);
+    }
+
+    revalidatePath('/tasks');
+    // redirect('/dashboard/invoices');
+
     return tasks.rows;
   } catch (error) {
     console.error("Database Error: Failed to Read Tasks:", error);
     throw error;
-  }
+  }  
 }
 
 export async function queryCreateTask(newTask: TaskCreate) {
   try {
     await sql`
-      INSERT INTO kanban_tasks (user_id, title, description, status, due_date, created_at, updated_at)
+      INSERT INTO tasks (user_id, title, description, status, due_date, created_at, updated_at)
       VALUES (${newTask.user_id}, ${newTask.title}, ${newTask.description}, ${newTask.status},${newTask.due_date},${newTask.created_at}, ${newTask.updated_at})
       ON CONFLICT (id) DO NOTHING;
       `;
@@ -58,7 +70,7 @@ export async function queryUpdateTask(taskId: any, updatedData: any) {
 export async function queryDeleteTask(taskId: any) {
   try {
     await sql`
-              DELETE * FROM kanban_tasks WHERE id = ${taskId}
+              DELETE FROM tasks WHERE task_id = ${taskId}
           `;
     return { message: "Task deleted successfully" };
   } catch (error) {

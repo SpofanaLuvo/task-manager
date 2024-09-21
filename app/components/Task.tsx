@@ -50,8 +50,8 @@ const Task: React.FC<any> = ({ task }) => {
   };
 
   return (
-    <tr key={task.id}>
-      <td >{task.id}</td>
+    <tr key={task.task_id}>
+      <td >{task.task_id}</td>
       <td className='w-full'>{task.title}</td>
       <td className='w-full'>{task.description}</td>
       <td className='w-full'>{task.status}</td>
@@ -73,7 +73,7 @@ const Task: React.FC<any> = ({ task }) => {
                 <span className="text-gray-700">Title:</span>
                 <input
                   name="title"
-                  value={taskToEdit.title}
+                  value={taskToEdit.title ?? ''}
                   onChange={handleInputChange}
                   type="text"
                   placeholder="Title"
@@ -84,7 +84,7 @@ const Task: React.FC<any> = ({ task }) => {
                 <span className="text-gray-700">Description:</span>
                 <textarea
                   name="description"
-                  value={taskToEdit.description}
+                  value={taskToEdit.description ?? ''}
                   onChange={handleInputChange}
                   placeholder="Description"
                   className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
@@ -107,7 +107,7 @@ const Task: React.FC<any> = ({ task }) => {
                 <span className="text-gray-700">Due Date:</span>
                 <input
                   name="due_date"
-                  value={taskToEdit.due_date}
+                  value={taskToEdit.due_date  ?? ''}
                   onChange={handleInputChange}
                   type="date"
                   placeholder="Due Date"
@@ -134,7 +134,7 @@ const Task: React.FC<any> = ({ task }) => {
             Are you sure you want to delete this task?
           </h3>
           <div className='modal-action'>
-            <button onClick={() => handleDeleteTask(task.id)} className='btn'>
+            <button onClick={() => handleDeleteTask(task.task_id)} className='btn'>
               Yes
             </button>
           </div>

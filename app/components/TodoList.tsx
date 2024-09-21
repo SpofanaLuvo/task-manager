@@ -2,11 +2,7 @@ import { ITask } from "@/interfaces/tasks";
 import React from "react";
 import Task from "./Task";
 
-interface TodoListProps {
-  tasks: Task[];
-}
-
-const TodoList: React.FC<TodoListProps> = ({ tasks }) => {
+const TodoList: React.FC<any> = ({ tasks }) => {
   if (!Array.isArray(tasks)) {
     return <div>No tasks available.</div>;
   }

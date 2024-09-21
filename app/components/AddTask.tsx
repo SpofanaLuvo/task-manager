@@ -77,7 +77,7 @@ const AddTask = () => {
               <span className="text-gray-700">User ID:</span>
               <input
                 name="user_id"
-                value={task.user_id}
+                value={task.user_id ?? ''}
                 onChange={handleInputChange}
                 type="number"
                 placeholder="User ID"
@@ -88,7 +88,7 @@ const AddTask = () => {
               <span className="text-gray-700">Title:</span>
               <input
                 name="title"
-                value={task.title}
+                value={task.title ?? ''}
                 onChange={handleInputChange}
                 type="text"
                 placeholder="Title"
@@ -99,7 +99,7 @@ const AddTask = () => {
               <span className="text-gray-700">Description:</span>
               <textarea
                 name="description"
-                value={task.description}
+                value={task.description ?? ''}
                 onChange={handleInputChange}
                 placeholder="Description"
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
@@ -109,7 +109,7 @@ const AddTask = () => {
               <span className="text-gray-700">Status:</span>
               <select
                 name="status"
-                value={task.status}
+                value={task.status ?? ''}
                 onChange={handleInputChange}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
               >
@@ -122,7 +122,7 @@ const AddTask = () => {
               <span className="text-gray-700">Due Date:</span>
               <input
                 name="due_date"
-                value={task.due_date}
+                value={task.due_date ?? ''}
                 onChange={handleInputChange}
                 type="date"
                 min={getTodayDate()}
