@@ -17,7 +17,6 @@ const generateRefreshToken = (email: string) => {
 };
 
 export async function POST(request: Request) {
-  console.log("LOGIN ENDPOINT")
   try {
     const body = await request.json();
     const { email, password } = body;
@@ -75,10 +74,6 @@ export async function POST(request: Request) {
           path: '/',
         }),
       ].join(', '));
-
-      console.log("ENDPOINT RESPONSE")
-      console.log(response)
-      console.log("ENDPOINT RESPONSE")
 
       return response;
     }

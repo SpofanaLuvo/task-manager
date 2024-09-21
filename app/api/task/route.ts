@@ -1,26 +1,19 @@
 import { NextResponse } from "next/server";
 import {
   queryCreateTask,
-  queryAllTasks,
 } from "@/app/server_lib/task_queries";
 
 // TASKS Handlers
-export async function GET(request: Request) {
-  const user = (request as any).user; // Extracting user from request object
 
-  const tasks = await queryAllTasks(user);
-
-  return tasks ? NextResponse.json(tasks) : NextResponse.json(
-    { message: "Could not fetch tasks" },
-    { status: 500 }
-  );
-}
 
 export async function POST(request: Request) {
   try {
-    const user = (request as any).user; // Extracting user from request object
     const data = await request.json();
-    const task = await queryCreateTask(user, data);
+    console.log("DATA FROM THE REQUEST")
+    console.log(data)
+    const task = await queryCreateTask(data);
+
+    console.log(task)
 
     if (task) {
       return NextResponse.json({ task });

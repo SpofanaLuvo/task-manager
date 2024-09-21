@@ -18,25 +18,26 @@ async function verifyToken(token: string): Promise<boolean> {
   }
 }
 
-// Middleware function
 export async function middleware(request: NextRequest) {
-  console.log("Middleware execution for URL:", request.nextUrl.pathname);
   const url = request.nextUrl.clone();
 
-  // List of protected routes
   const protectedRoutes = ["/api/task", "/api/test"];
 
-  // Check if the request url matches any of the protected routes
   const requiresAuth = protectedRoutes.some((route) =>
     url.pathname.startsWith(route)
   );
 
   if (requiresAuth) {
-    const token = request.cookies.get("access-token");
+    // Extract token from the Authorization header
+    const authorizationHeader = request.headers.get("Authorization");
+    const token = authorizationHeader && authorizationHeader.startsWith("Bearer ")
+      ? authorizationHeader.split(" ")[1]
+      : null;
+
+    console.log("Authorization Header:", authorizationHeader);
     console.log("Token found:", token);
 
     if (!token || !(await verifyToken(token))) {
-      // Differentiating between API and non-API routes
       if (url.pathname.startsWith("/api/")) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       } else {
@@ -49,10 +50,9 @@ export async function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-// Config to specify the paths where the middleware should be applied
 export const config = {
   matcher: [
     "/api/task/:path*",
     "/api/auth/refresh:path*",
-  ], // Add more paths if needed
+  ],
 };

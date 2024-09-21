@@ -15,7 +15,8 @@ export type TaskCreate = {
   user_id: string;
   title: string;
   description: string;
-  status: 'Pending' | 'In progress' | 'Internal Testing'
+  status: 'Pending' | 'In progress' | 'Internal Testing',
+  due_date: string,
   created_at: string;
   updated_at: string;
 }

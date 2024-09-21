@@ -1,101 +1,65 @@
-"use server";
-import { sql } from "@vercel/postgres";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { Task, User } from "./definitions";
 
-const bcrypt = require("bcrypt");
+import apiClient from "@/apiClient"; // Ensure this path is correct for your setup
 
-export const getCurrentDateTimeFormatted = () => {
-  const now = new Date();
-  
-  return now.toISOString().slice(0, 19).replace('T', ' ');
-}
+export const getAllTasks = async (user_id: any) => {
+  try {
+    const res = await apiClient.get(`/api/task?user_id=${user_id}`, {
+      withCredentials: true,
+    });
 
-const baseUrl = 'http://localhost:3000';
-
-export const getAllTasks = async (user: any): Promise<any> => {
-  console.log("-----------------------")
-  console.log(user)
-  const res = await fetch(`${baseUrl}/api/task`, { 
-    method: 'GET',
-    cache: 'no-store',
-    headers: {
-      'Authorization': `Bearer ${user.accessToken}`,
+    if (res.status !== 200) {
+      throw new Error(`An error occurred: ${res.statusText}`);
     }
-  });
+    console.log("Attempt to get tasks")
 
-  console.log("-----------------------")
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+    throw error;
+  }
+};
 
-
-  // console.log(res.json())
-  console.log("-----------------------")
+export const addTask = async (task : any) => {
+  console.log("CALLIGN THE API TO CREATE TASK")
+  try {
+    const res = await apiClient.post("/api/task", task, {
+      withCredentials: true,
+    });
   
 
-  if (!res.ok) {
-    throw new Error(`An error occurred: ${res.statusText}`);
+    return res.data;
+  } catch (error) {
+    console.error("Error adding task:", error);
+    throw error;
   }
+};
 
-  const tasks = await res.json();
-  return tasks;
-}
+export const editTask = async (task_id: string, updated_task: any) => {
+  try {
+    const res = await apiClient.put(`/api/task/${task_id}`, updated_task, {
+      withCredentials: true,
+    });
 
-export const addTask = async (user: any, task: any): Promise<any> => {
-  console.log("Endpoint Attempt to ADD TASK");
-
-  const taskWithUserId = { ...task, user_id: user.user_id };
-
-  const res = await fetch(`${baseUrl}/api/task`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${user.token}`
-    },
-    body: JSON.stringify(taskWithUserId)
-  });
-
-  if (!res.ok) {
-    throw new Error(`An error occurred: ${res.statusText}`);
-  }
-
-  const newTask = await res.json();
-  return newTask;
-}
-
-export const editTask = async (user: any, task_id: string, updated_task: any): Promise<any> => {
-  console.log("Task update fetch");
-
-  const updatedTaskWithUserId = { ...updated_task, user_id: user.user_id };
-
-  console.log(task_id, updatedTaskWithUserId);
-  const res = await fetch(`${baseUrl}/api/task/${task_id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${user.token}`
-    },
-    body: JSON.stringify(updatedTaskWithUserId)
-  });
-
-  if (!res.ok) {
-    throw new Error(`An error occurred: ${res.statusText}`);
-  }
-
-  const updatedTask = await res.json();
-  return updatedTask;
-}
-
-export const deleteTask = async (user: any, id: string): Promise<void> => {
-  console.log("Attempting to delete task");
-
-  const res = await fetch(`${baseUrl}/api/task/${id}`, {
-    method: 'DELETE',
-    headers: {
-      'Authorization': `Bearer ${user.token}`
+    if (res.status !== 200) {
+      throw new Error(`An error occurred: ${res.statusText}`);
     }
-  });
 
-  if (!res.ok) {
-    throw new Error(`An error occurred: ${res.statusText}`);
+    return res.data;
+  } catch (error) {
+    console.error("Error updating task:", error);
+    throw error;
   }
-}
+};
+
+export const deleteTask = async (id : string) => {
+  try {
+    const res = await apiClient.delete(`/api/task/${id}`);
+
+    if (res.status !== 200) {
+      throw new Error(`An error occurred: ${res.statusText}`);
+    }
+  } catch (error) {
+    console.error("Error deleting task:", error);
+    throw error;
+  }
+};

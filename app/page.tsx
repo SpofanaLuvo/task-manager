@@ -39,6 +39,8 @@ export default function Home() {
       }),
     };
 
+    console.log("LOGING THE USER INNNNNN")
+
     const userEmail = event.currentTarget.email.value;
     const userPassword = event.currentTarget.password.value;
     
@@ -47,7 +49,10 @@ export default function Home() {
       // Implement your sign-up logic here
       // success = await registerUser({ email, password, ... });
     } else {
+      
       success = await login(userEmail, userPassword);
+
+      
     }
 
     if (success) {

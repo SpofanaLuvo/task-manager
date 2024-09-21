@@ -2,48 +2,61 @@
 
 import { AiOutlinePlus } from "react-icons/ai";
 import Modal from "./Modal";
-import { FormEventHandler, useState } from "react";
-import { getCurrentDateTimeFormatted, addTask } from "../client_lib/task_actions";
+import { useState, FormEventHandler } from "react";
+import { addTask } from "../client_lib/task_actions";
 import { useRouter } from "next/navigation";
+import useAuthStore from "@/store/authStore";
 
 const AddTask = () => {
   const router = useRouter();
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const user = useAuthStore((state: any) => state.user);
+  const [modalOpen, setModalOpen] = useState(false);
   const [task, setTask] = useState({
-    user_id: 4,
+    user_id: user.id,
     title: "",
     description: "",
     status: "Pending",
     due_date: "",
-    created_at: "",
-    updated_at: ""
   });
+
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   const handleSubmitNewTask: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
     const now = new Date();
-    const currentDateTime = now.toISOString().slice(0, 19).replace('T', ' ')
-    
+    const currentDateTime = now.toISOString().slice(0, 19).replace("T", " ");
+
     const newTask = {
       ...task,
       created_at: currentDateTime,
-      updated_at: currentDateTime
+      updated_at: currentDateTime,
     };
 
-    console.log("Attempt to ADD TASK 1");
-    console.log(newTask);
-
-    await addTask(newTask);
-    setModalOpen(false);
-    router.refresh();
+    try {
+      const taskCreate = await addTask(newTask);
+      if (taskCreate) {
+        alert("TASK ADDED SUCCESSFULLY");
+      }
+      setModalOpen(false);
+      router.refresh();
+    } catch (error) {
+      console.error("Failed to add task:", error);
+      alert("An error occurred while adding the task. Please try again.");
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setTask((prevState) => ({
       ...prevState,
-      [name]: name === "user_id" ? Number(value) : value,
+      [name]: value,
     }));
   };
 
@@ -112,6 +125,7 @@ const AddTask = () => {
                 value={task.due_date}
                 onChange={handleInputChange}
                 type="date"
+                min={getTodayDate()}
                 placeholder="Due Date"
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
               />

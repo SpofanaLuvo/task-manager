@@ -9,6 +9,9 @@ export async function queryAllTasks(user_id: string) {
       SELECT * FROM kanban_tasks
       WHERE user_id = ${user_id}
     `;
+console.log("ROWSSSSSSS")
+    console.log(tasks.rows)
+    console.log("ROWSSSSSSS")
     return tasks.rows;
   } catch (error) {
     console.error("Database Error: Failed to Read Tasks:", error);
@@ -19,10 +22,11 @@ export async function queryAllTasks(user_id: string) {
 export async function queryCreateTask(newTask: TaskCreate) {
   try {
     await sql`
-      INSERT INTO kanban_tasks (user_id, title, description, status, created_at, updated_at)
-      VALUES (${newTask.user_id}, ${newTask.title}, ${newTask.description}, ${newTask.status}, ${newTask.created_at}, ${newTask.updated_at})
+      INSERT INTO kanban_tasks (user_id, title, description, status, due_date, created_at, updated_at)
+      VALUES (${newTask.user_id}, ${newTask.title}, ${newTask.description}, ${newTask.status},${newTask.due_date},${newTask.created_at}, ${newTask.updated_at})
       ON CONFLICT (id) DO NOTHING;
       `;
+      console.log("TASK HAS BEEN CREATE")
     return "task created successfully";
   } catch (error) {
     return {
@@ -54,7 +58,7 @@ export async function queryUpdateTask(taskId: any, updatedData: any) {
 export async function queryDeleteTask(taskId: any) {
   try {
     await sql`
-              DELETE FROM kanban_tasks WHERE id = ${taskId}
+              DELETE * FROM kanban_tasks WHERE id = ${taskId}
           `;
     return { message: "Task deleted successfully" };
   } catch (error) {
