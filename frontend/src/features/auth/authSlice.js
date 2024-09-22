@@ -1,50 +1,50 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "./authService";
 
-//Get user from localStorage
-const user = JSON.parse(localStorage.getItem("user"));
+// Utility function to get the error message
+const getErrorMessage = (error) => {
+  return (
+    (error.response &&
+      error.response.data &&
+      error.response.data.message) ||
+    error.message ||
+    error.toString()
+  );
+};
+
+// Get user from localStorage
+const getUserFromLocalStorage = () => {
+  const user = localStorage.getItem("user");
+  return user ? JSON.parse(user) : null;
+};
 
 const initialState = {
-  user: user ? user : null,
+  user: getUserFromLocalStorage(),
   isError: false,
   isSuccess: false,
   isLoading: false,
   message: "",
 };
 
-// register user
-export const register = createAsyncThunk(
-  "auth/register",
-  async (user, thunkAPI) => {
-    try {
-      // returns the payload that is used and actioned by the fullfiled case of register
-      return await authService.register(user);
-    } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
+// Register user
+export const register = createAsyncThunk("auth/register", async (user, thunkAPI) => {
+  try {
+    return await authService.register(user);
+  } catch (error) {
+    return thunkAPI.rejectWithValue(getErrorMessage(error));
   }
-);
+});
 
 // Login user
 export const login = createAsyncThunk("auth/login", async (user, thunkAPI) => {
   try {
-    // returns the payload that is used and actioned by the fullfiled case of register
     return await authService.login(user);
   } catch (error) {
-    const message =
-      (error.response && error.response.data && error.response.data.message) ||
-      error.message ||
-      error.toString();
-    return thunkAPI.rejectWithValue(message);
+    return thunkAPI.rejectWithValue(getErrorMessage(error));
   }
 });
 
+// Logout user
 export const logout = createAsyncThunk("auth/logout", async () => {
   await authService.logout();
 });
