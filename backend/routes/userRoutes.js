@@ -4,10 +4,12 @@ const {
     registerUser,
     loginUser,
     getMe,
+    refreshAccessToken,
 } = require("../controllers/userController");
 
 const { protect } = require("../middleware/authMiddleware");
-router.post("/", registerUser);
+router.post("/refresh-token",refreshAccessToken)
+router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get("/me", protect, getMe);
 

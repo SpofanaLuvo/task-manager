@@ -2,31 +2,37 @@ import axios from "axios";
 
 const API_URL = "http://localhost:3001/api/users/";
 
-// register user
-
+// Register user
 const register = async (userData) => {
-  const response = await axios.post(API_URL, userData);
-
+  const response = await axios.post(`${API_URL}register`, userData);
   if (response.data) {
     localStorage.setItem("user", JSON.stringify(response.data));
   }
-
   return response.data;
 };
 
-// LOGIN USER
+// Login user
 const login = async (userData) => {
-  const response = await axios.post(API_URL + "login", userData);
-
+  const response = await axios.post(`${API_URL}login`, userData);
   if (response.data) {
     localStorage.setItem("user", JSON.stringify(response.data));
   }
-
   return response.data;
 };
 
-// LOGOUT USER
+// Refresh access token
+const refreshAccessToken = async () => {
+  const response = await axios.post(`${API_URL}refresh-token`); 
+  if (response.data) { 
+    const user = JSON.parse(localStorage.getItem("user"));
+    user.accessToken = response.data.accessToken; 
+    localStorage.setItem("user", JSON.stringify(user));
+    return response.data.accessToken; 
+  }
+  throw new Error('Unable to refresh access token');
+};
 
+// Logout user
 const logout = () => {
   localStorage.removeItem("user");
 };
@@ -34,7 +40,8 @@ const logout = () => {
 const authService = {
   register,
   logout,
-  login
+  login,
+  refreshAccessToken,
 };
 
 export default authService;

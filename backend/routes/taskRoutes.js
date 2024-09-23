@@ -10,8 +10,8 @@ const {
 const { protect } = require("../middleware/authMiddleware");
 
 // router.get("/", getAvailableCleaners);
-router.get("/task/:user_id", protect, getTasksByUser);
-router.route("/task").post(protect, createTask).put(protect, updateTask);
-router.delete("/task/:task_id", protect, deleteTask);
+router.get("/api/task/:user_id", protect, getTasksByUser);
+router.route("/api/task").post(protect, createTask).put(protect, updateTask);
+router.delete("/api/task/:task_id", protect, deleteTask);
 
 module.exports = router;

@@ -1,11 +1,11 @@
 const pool = require("../config/dbConnection");
 
 const insert = {
-    kanban_users: async (user) => {
-        const { username, email, password, phone, address, membershipPlan } =
+    kanban_users: (user) => {
+        const { username, email, password, membership_plan } =
             user;
 
-        let membershipCode = generateMembershipCode(username);
+        let membership_code = generateMembershipCode(username);
 
         const now = new Date();
         const currentDateTime = now
@@ -13,9 +13,11 @@ const insert = {
             .slice(0, 19)
             .replace("T", " ");
 
-        return `INSERT INTO kanban_users (username, email, password, phone, address, membership_number, membership_plan, created_at)
-           VALUES (${username}, ${email}, ${password}, ${phone}, ${address} ${membershipCode}, ${membershipPlan} ${currentDateTime})
-           ON CONFLICT (id) DO NOTHING;
+            console.log("REGISTER USER TRIGGERED")
+
+        return `INSERT INTO kanban_users (username, email, password, membership_code, membership_plan, created_at)
+           VALUES ('${username}', '${email}', '${password}', '${membership_code}', '${membership_plan}', '${currentDateTime}')
+           ON CONFLICT (user_id) DO NOTHING;
            `;
     },
     task: (task) => {
@@ -24,13 +26,14 @@ const insert = {
         return `
       INSERT INTO tasks (user_id, title, description, task_status, due_date, created_at, updated_at)
       VALUES (${user_id}, ${title}, ${description}, ${taskStatus},${due_date},${created_at}, ${updated_at})
-      ON CONFLICT (id) DO NOTHING;
+      ON CONFLICT (task_id) DO NOTHING;
       `;
     },
 };
 
 const select = {
     userWithEmail: (email) => {
+        console.log("SELECT QUERY TRIGGERED", email)
         return `SELECT * FROM kanban_users WHERE email ='${email}';`;
     },
     userWithId: (user_id) => {

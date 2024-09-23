@@ -4,3 +4,6 @@ import authReducer from "../features/auth/authSlice";
 export const store = configureStore({
   reducer: { auth: authReducer },
 });
+
+export const getStoreState = () => store.getState();
+export default store;

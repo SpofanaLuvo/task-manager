@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout, reset } from "../features/auth/authSlice";
 
-function Header() {
+const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
@@ -13,6 +13,11 @@ function Header() {
     dispatch(reset());
     navigate("/");
   };
+
+  console.log("USER FROM THE HEADER")
+
+  console.log(user)
+  console.log("USER FROM THE HEADER")
 
   return (
     <header className="header">

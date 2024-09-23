@@ -38,11 +38,24 @@ export const register = createAsyncThunk("auth/register", async (user, thunkAPI)
 // Login user
 export const login = createAsyncThunk("auth/login", async (user, thunkAPI) => {
   try {
-    return await authService.login(user);
+    console.log(user)
+    console.log("Login from the sLICE triggered")
+    const loggedInUser = await authService.login(user);
+    console.log(loggedInUser)
+    return loggedInUser;
   } catch (error) {
     return thunkAPI.rejectWithValue(getErrorMessage(error));
   }
 });
+
+export const refreshAccessToken = createAsyncThunk ('auth/refreshAccessToken', async (_, { getState }, thunkAPI) => {
+  try {
+    await authService.refreshAccessToken();
+    return true
+  }catch (error) {
+    return thunkAPI.rejectWithValue(getErrorMessage(error))
+  }
+})
 
 // Logout user
 export const logout = createAsyncThunk("auth/logout", async () => {
@@ -89,6 +102,17 @@ export const authSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
         state.user = null;
+      })
+      .addCase(refreshAccessToken.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        state.user = null;
+      })
+      .addCase(refreshAccessToken.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload;
       })
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
