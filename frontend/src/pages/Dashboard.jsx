@@ -26,6 +26,7 @@ const Dashboard = () => {
       
         if (refreshAccessToken.fulfilled.match(resultAction)) {
           // Token refresh was successful
+          console.log("refresh token still valid")
         } else {
           // Token refresh failed, navigate to login
           navigate('/login');
@@ -35,7 +36,7 @@ const Dashboard = () => {
 
       // Fetch tasks
       try {
-        const returnedData = await getAllTasks(user.id);
+        const returnedData = await getAllTasks(user.user_id);
         setTasks(returnedData);
       } catch (error) {
         console.error("Error fetching tasks:", error);

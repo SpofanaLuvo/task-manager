@@ -10,7 +10,7 @@ const AddTask = () => {
   const user = useSelector((state) => state.auth.user);
   const [modalOpen, setModalOpen] = useState(false);
   const [task, setTask] = useState({
-    user_id: user.id,
+    user_id: user?.user_id,
     title: "",
     description: "",
     status: "Pending",

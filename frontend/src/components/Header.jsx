@@ -16,7 +16,7 @@ const Header = () => {
 
   console.log("USER FROM THE HEADER")
 
-  console.log(user)
+  // console.log(user)
   console.log("USER FROM THE HEADER")
 
   return (

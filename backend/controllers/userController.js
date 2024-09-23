@@ -144,10 +144,10 @@ const getMe = asyncHandler(async (req, res) => {
 
     console.log(result);
 
-    const { _id, name, email } = result.rows[0];
+    const { user_id, username, email } = result.rows[0];
     res.status(200).json({
-        id: _id,
-        name,
+        id: user_id,
+        username,
         email,
     });
 });

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 const UserDetails = () => {
   // Extract user data from the Redux store
-  const user = useSelector((state) => state.auth.user);
+//   const user = useSelector((state) => state.auth.user);
 
   if (!user) {
     return <p className="text-center text-gray-600">Loading user details...</p>;
