@@ -1,0 +1,7 @@
+PG_USER="postgres_user"
+PG_HOST="postgres"
+DB_NAME="task_manager"
+DB_PASSWORD="taskManager"
+PG_PORT="5432"
+
+JWT_SECRET="PERNSTACK"
