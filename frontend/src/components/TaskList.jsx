@@ -15,7 +15,7 @@ const TaskList = ({ tasks }) => {
             <th>Task ID</th>
             <th>Title</th>
             <th>Description</th>
-            <th>Status</th>
+            <th>Task Status</th>
             <th>Due Date</th>
             <th>Created at</th>
             <th>Updated at</th>

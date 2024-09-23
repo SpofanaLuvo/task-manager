@@ -94,9 +94,9 @@ const Register = () => {
             />
           </div>
 
-          <div className="form-group">
+          <div className="form-group relative">
             <select
-              className="form-control"
+              className="form-control w-full px-4 py-2 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600 appearance-none"
               name="membership_plan"
               value={membership_plan}
               onChange={onChange}
@@ -106,6 +106,11 @@ const Register = () => {
               <option value="Premium">Premium</option>
               <option value="VIP">VIP</option>
             </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
           </div>
 
           <div className="form-group">

@@ -21,6 +21,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       if (!user || !accessToken) {
+        
         // Optionally, we can dispatch a refresh token action if it's needed
         const resultAction = await dispatch(refreshAccessToken());
       
@@ -36,7 +37,7 @@ const Dashboard = () => {
 
       // Fetch tasks
       try {
-        const returnedData = await getAllTasks(user.user_id);
+        const returnedData = await getAllTasks(user.user_email);
         setTasks(returnedData);
       } catch (error) {
         console.error("Error fetching tasks:", error);

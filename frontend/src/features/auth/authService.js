@@ -1,4 +1,5 @@
 import axios from "axios";
+import apiClient from "../../apiClient";
 
 const API_URL = "http://localhost:3001/api/users/";
 
@@ -13,7 +14,7 @@ const register = async (userData) => {
 
 // Login user
 const login = async (userData) => {
-  const response = await axios.post(`${API_URL}login`, userData);
+  const response = await apiClient.post(`${API_URL}login`, userData);
   if (response.data) {
     localStorage.setItem("user", JSON.stringify(response.data));
   }
@@ -22,7 +23,8 @@ const login = async (userData) => {
 
 // Refresh access token
 const refreshAccessToken = async () => {
-  const response = await axios.post(`${API_URL}refresh-token`); 
+  const response = await apiClient.post(`${API_URL}refresh-token`); 
+
   if (response.data) { 
     const user = JSON.parse(localStorage.getItem("user"));
     user.accessToken = response.data.accessToken; 

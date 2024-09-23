@@ -42,14 +42,14 @@ const createTableScripts = {
     );`,
     tasks: `CREATE TABLE IF NOT EXISTS tasks (
         task_id SERIAL PRIMARY KEY,
-        user_id INT NOT NULL,
+        created_by VARCHAR(255) NOT NULL,
         title VARCHAR(255) NOT NULL,
         description TEXT,
         task_status VARCHAR(50) NOT NULL,  -- Task status (e.g., pending, completed)
         due_date TIMESTAMP,
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES kanban_users(user_id) ON DELETE CASCADE
+        CONSTRAINT fk_user FOREIGN KEY (created_by) REFERENCES kanban_users(email) ON DELETE CASCADE
     );`,
 };
 

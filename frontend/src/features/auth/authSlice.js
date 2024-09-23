@@ -16,6 +16,7 @@ const getErrorMessage = (error) => {
 const getUserFromLocalStorage = () => {
   const user = localStorage.getItem("user");
   return user ? JSON.parse(user) : null;
+
 };
 
 const initialState = {
@@ -38,10 +39,8 @@ export const register = createAsyncThunk("auth/register", async (user, thunkAPI)
 // Login user
 export const login = createAsyncThunk("auth/login", async (user, thunkAPI) => {
   try {
-    console.log(user)
-    console.log("Login from the sLICE triggered")
     const loggedInUser = await authService.login(user);
-    console.log(loggedInUser)
+
     return loggedInUser;
   } catch (error) {
     return thunkAPI.rejectWithValue(getErrorMessage(error));

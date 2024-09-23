@@ -3,13 +3,13 @@ import { getStoreState } from './app/store';
 import { refreshAccessToken } from './features/auth/authSlice';
 
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/',
   withCredentials: true,
 });
 
 apiClient.interceptors.request.use(
   (config) => {
-    const accessToken = getStoreState().auth.user?.accessToken;
+    const accessToken = getStoreState().auth.user?.token;
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }

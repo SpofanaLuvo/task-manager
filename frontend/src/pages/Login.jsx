@@ -20,6 +20,10 @@ const Login = () => {
     (state) => state.auth
   );
 
+  console.log("USERRRRR")
+console.log(user)
+  console.log("USERRRRR")
+
   useEffect(() => {
     if (isError) {
       toast.error(message);

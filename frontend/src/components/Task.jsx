@@ -11,21 +11,25 @@ const Task = ({ task }) => {
   const [taskToEdit, setTaskToEdit] = useState({
     title: task.title,
     description: task.description,
-    status: task.status,
+    status: task.task_status,
     due_date: task.due_date,
-    created_at: task.created_at,
-    updated_at: task.updated_at,
   });
 
   const handleSubmitEditTask = async (e) => {
     e.preventDefault();
 
     const updatedTask = {
-      ...taskToEdit,
-      updated_at: new Date().toISOString().slice(0, 19).replace('T', ' '),
+      task_id: task.task_id,
+      ...taskToEdit
     };
 
-    await editTask(task.id, updatedTask);
+    console.log("UPDATED TASK FROM EDIT")
+    console.log(updatedTask)
+
+    console.log("UPDATED TASK FROM EDIT")
+
+
+    await editTask(updatedTask);
     setOpenModalEdit(false);
     navigate(0); // Refresh the page after editing the task
   };
@@ -39,6 +43,7 @@ const Task = ({ task }) => {
   };
 
   const handleDeleteTask = async (id) => {
+    console.log("ATEMPTING TO DELETE TASK WITH ID", id)
     await deleteTask(id);
     setOpenModalDelete(false);
     navigate(0); // Refresh the page after deleting the task
@@ -49,7 +54,7 @@ const Task = ({ task }) => {
       <td>{task.task_id}</td>
       <td className='w-full'>{task.title}</td>
       <td className='w-full'>{task.description}</td>
-      <td className='w-full'>{task.status}</td>
+      <td className='w-full'>{task.task_status}</td>
       <td className='w-full'>{task.due_date}</td>
       <td className='w-full'>{task.created_at}</td>
       <td className='w-full'>{task.updated_at}</td>

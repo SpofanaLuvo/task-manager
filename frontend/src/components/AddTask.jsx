@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // react-router for navigation
-import { useSelector } from 'react-redux'; // react-redux for accessing state
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; 
+import { useSelector } from 'react-redux'; 
 import { AiOutlinePlus } from 'react-icons/ai';
 import Modal from './Modal';
 import { addTask } from '../features/task_actions/task_service';
@@ -9,13 +9,26 @@ const AddTask = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    console.log("USER FROM ADD TASK pulled from State");
+    console.log(user);
+  }, [user]);
+
   const [task, setTask] = useState({
-    user_id: user?.user_id,
+    user_email: user?.user_email ?? '',
     title: "",
     description: "",
     status: "Pending",
     due_date: "",
   });
+
+  useEffect(() => {
+    setTask(prevTask => ({
+      ...prevTask,
+      user_email: user?.user_email ?? ''
+    }));
+  }, [user]);
 
   const getTodayDate = () => {
     const today = new Date();
@@ -31,20 +44,12 @@ const AddTask = () => {
     const now = new Date();
     const currentDateTime = now.toISOString().slice(0, 19).replace("T", " ");
 
-    const newTask = {
-      ...task,
-      created_at: currentDateTime,
-      updated_at: currentDateTime,
-    };
-
     try {
-      const taskCreate = await addTask(newTask);
+      const taskCreate = await addTask(task);
       if (taskCreate) {
         alert("Task added successfully");
       }
       setModalOpen(false);
-
-      // Refreshing the page by navigating to the same path
       navigate(0);
     } catch (error) {
       console.error("Failed to add task:", error);
@@ -74,44 +79,34 @@ const AddTask = () => {
           <h3 className="font-bold text-lg mb-4">Add New Task</h3>
           <div className="space-y-4">
             <label className="block">
-              <span className="text-gray-700">User ID:</span>
-              <input
-                name="user_id"
-                value={task.user_id ?? ''}
-                onChange={handleInputChange}
-                type="number"
-                placeholder="User ID"
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
-              />
-            </label>
-            <label className="block">
               <span className="text-gray-700">Title:</span>
               <input
                 name="title"
-                value={task.title ?? ''}
+                value={task.title}
                 onChange={handleInputChange}
                 type="text"
                 placeholder="Title"
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none p-4"
               />
             </label>
             <label className="block">
               <span className="text-gray-700">Description:</span>
               <textarea
                 name="description"
-                value={task.description ?? ''}
+                value={task.description}
                 onChange={handleInputChange}
                 placeholder="Description"
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none p-4"
               />
             </label>
+            
             <label className="block">
               <span className="text-gray-700">Status:</span>
               <select
                 name="status"
-                value={task.status ?? ''}
+                value={task.status}
                 onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none p-4"
               >
                 <option value="Pending">Pending</option>
                 <option value="In Progress">In Progress</option>
@@ -122,12 +117,12 @@ const AddTask = () => {
               <span className="text-gray-700">Due Date:</span>
               <input
                 name="due_date"
-                value={task.due_date ?? ''}
+                value={task.due_date}
                 onChange={handleInputChange}
                 type="date"
                 min={getTodayDate()}
                 placeholder="Due Date"
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none p-4"
               />
             </label>
             <button

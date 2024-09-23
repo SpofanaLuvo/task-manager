@@ -1,44 +1,44 @@
-const jwt = require("jsonwebtoken");
-const asyncHandler = require("express-async-handler");
-const pool = require("../config/dbConnection");
-const { insertInto, selectFrom } = require("../helpers/helperData");
+const jwt = require('jsonwebtoken');
+const asyncHandler = require('express-async-handler');
+const pool = require('../config/dbConnection');
+const { select } = require('../helpers/helperData');
+const cookieParser = require('cookie-parser'); // Ensure cookie-parser is used in your main app file
 
 const protect = asyncHandler(async (req, res, next) => {
-    let token;
+  let token;
 
-    if (
-        req.headers.authorization &&
-        req.headers.authorization.startsWith("Bearer ")
-    ) {
-        try {
-            // get token from header
-            token = req.headers.authorization.split(" ")[1];
-            //verify token
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+   
+    token = req.headers.authorization.split(' ')[1];
+  }
 
-            //get users from the token
+  if (!token && req.cookies) {
+    token = req.cookies['access-token'];
+  }
 
-            const user = await pool.query(
-                selectFrom.userWithId(decoded.userId)
-            );
+  if (!token) {
+    res.status(401);
+    throw new Error('Not authorized, no token');
+  }
 
-            
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-            delete user.rows[0].password;
-            req.user = user.rows[0];
-
-            next();
-        } catch (error) {
-            console.log(error);
-            res.status(401);
-            throw new Error("Not authorized");
-        }
+    const userResult = await pool.query(select.userWithEmail(decoded.user_email));
+    const user = userResult.rows[0];
+    if (!user) {
+      res.status(401);
+      throw new Error('Not authorized, user not found');
     }
 
-    if (!token) {
-        res.status(401);
-        throw new Error("Not authorized, no token");
-    }
+    delete user.password;
+    req.user = user;
+    next();
+  } catch (error) {
+    console.error(error);
+    res.status(401);
+    throw new Error('Not authorized, token failed');
+  }
 });
 
 module.exports = { protect };
