@@ -18,10 +18,9 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchTasks = async () => {
-
-      if(!user ) {
-        navigate("/login")
-        return
+      if (!user) {
+        navigate("/login");
+        return;
       }
 
       try {

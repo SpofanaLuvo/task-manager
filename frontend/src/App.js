@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Header from "./components/Header";
 import Profile from "./pages/Profile";
+import NotFound from "./pages/NotFound";
 
 const App = () => {
     return (
@@ -18,6 +19,7 @@ const App = () => {
                         <Route path='/login' element={<Login />} />
                         <Route path='/register' element={<Register />} />
                         <Route path='/profile' element={<Profile />} />
+                        <Route path='*' element={<NotFound />} />
                     </Routes>
                     <ToastContainer />
                 </div>
