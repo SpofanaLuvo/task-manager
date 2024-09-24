@@ -24,6 +24,9 @@ const insert = {
       .slice(0, 19)
       .replace("T", " ");
 
+      console.log("------------------------------------------------")
+      console.log("Singenile tata, nayi le task", task)
+
     return `
       INSERT INTO tasks (created_by, title, description, task_status, due_date, created_at, updated_at)
       VALUES ('${user_email}', '${title}', '${description}', '${status}', '${due_date}', '${currentDateTime}', '${currentDateTime}')

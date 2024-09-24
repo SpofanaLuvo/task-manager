@@ -42,18 +42,13 @@ const registerUser = asyncHandler(async (req, res) => {
     if (registeredUser) {
         let user = await pool.query(select.userWithEmail(email));
         user = user.rows[0];
+
         const token = generateToken(user.email);
-        res.setHeader('Set-Cookie', serialize('jwt', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV !== 'development',
-            sameSite: 'strict',
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-            path: '/',
-        }));
+
         res.status(201).json({
             user_id: user.user_id,
             username: user.username,
-            email: user.email,
+            user_email: user.email,
             token: token,
             membership_code: user.membership_code,
             membership_plan: user.membership_plan
@@ -136,7 +131,6 @@ const getMe = asyncHandler(async (req, res) => {
 //@desc = Refresh access token
 //@route = POST /refresh-token
 //@access = Private
-// Refresh Access Token Endpoint
 const refreshAccessToken = asyncHandler(async (req, res) => {
   const { cookies } = req;
   const refreshToken = cookies['refresh-token'];

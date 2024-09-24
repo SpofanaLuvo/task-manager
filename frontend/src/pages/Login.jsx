@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { FaSignInAlt } from 'react-icons/fa';
-import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { login, reset } from '../features/auth/authSlice';
-import Spinner from '../components/Spinner';
+import React, { useEffect, useState } from "react";
+import { FaSignInAlt } from "react-icons/fa";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { login, reset } from "../features/auth/authSlice";
+import Spinner from "../components/Spinner";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   const { email, password } = formData;
@@ -20,17 +20,13 @@ const Login = () => {
     (state) => state.auth
   );
 
-  console.log("USERRRRR")
-console.log(user)
-  console.log("USERRRRR")
-
   useEffect(() => {
     if (isError) {
       toast.error(message);
     }
 
-    if (isSuccess || user) {
-      navigate('/');
+    if (user) {
+      navigate("/");
     }
 
     dispatch(reset());
@@ -47,7 +43,7 @@ console.log(user)
     e.preventDefault();
 
     if (!email || !password) {
-      toast.error('Please enter both email and password.');
+      toast.error("Please enter both email and password.");
       return;
     }
 
@@ -61,41 +57,41 @@ console.log(user)
 
   return (
     <>
-      <section className='heading'>
+      <section className="heading">
         <h1>
           <FaSignInAlt /> Login
         </h1>
         <p>Login and start creating tasks</p>
       </section>
 
-      <section className='form'>
+      <section className="form">
         <form onSubmit={onSubmit}>
-          <div className='form-group'>
+          <div className="form-group">
             <input
-              type='email'
-              className='form-control'
-              name='email'
+              type="email"
+              className="form-control"
+              name="email"
               value={email}
-              placeholder='Enter your email address'
+              placeholder="Enter your email address"
               onChange={onChange}
               required
             />
           </div>
-          <div className='form-group'>
+          <div className="form-group">
             <input
-              type='password'
-              id='password'
-              className='form-control'
-              name='password'
+              type="password"
+              id="password"
+              className="form-control"
+              name="password"
               value={password}
-              placeholder='Enter your password'
+              placeholder="Enter your password"
               onChange={onChange}
               required
             />
           </div>
 
-          <div className='form-group'>
-            <button type='submit' className='btn btn-block'>
+          <div className="form-group">
+            <button type="submit" className="btn btn-block">
               Submit
             </button>
           </div>
@@ -103,6 +99,6 @@ console.log(user)
       </section>
     </>
   );
-}
+};
 
 export default Login;

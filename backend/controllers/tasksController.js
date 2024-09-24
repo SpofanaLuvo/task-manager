@@ -4,7 +4,7 @@ const pool = require("../config/dbConnection");
 
 //@desc = Get all tasks from user
 //@route = GET /api/tasks/
-//@access = Public
+//@access = Private
 const getTasksByUser = asyncHandler(async (req, res) => {
     const { user_email } = req.params;
 
@@ -21,9 +21,10 @@ const getTasksByUser = asyncHandler(async (req, res) => {
 
 //@desc = Create a task
 //@route = POST /api/tasks/
-//@access = Public
+//@access = Private
 const createTask = asyncHandler(async (req, res) => {
     const task = req.body;
+    
     try {
         
         const newTask = await pool.query(
@@ -40,8 +41,8 @@ const createTask = asyncHandler(async (req, res) => {
 });
 
 //@desc = Update a task
-//@route = PUT /api/tasks/:task_id
-//@access = Public
+//@route = PUT /api/tasks/
+//@access = Private
 const updateTask = asyncHandler(async (req, res) => {
     const updatedTaskData = req.body;
    
@@ -57,10 +58,9 @@ const updateTask = asyncHandler(async (req, res) => {
     }
 });
 
-
 //@desc = Delete a task
 //@route = DELETE /api/tasks/:task_id
-//@access = Public
+//@access = Private
 const deleteTask = asyncHandler(async (req, res) => {
     const { task_id } = req.params;
 
@@ -76,7 +76,6 @@ const deleteTask = asyncHandler(async (req, res) => {
         res.status(500).json("Server error while deleting task.");
     }
 });
-
 
 module.exports = {
     getTasksByUser,

@@ -24,10 +24,12 @@ const login = async (userData) => {
 // Refresh access token
 const refreshAccessToken = async () => {
   const response = await apiClient.post(`${API_URL}refresh-token`); 
+  console.log("TRIGGER REFRESHHHHHHHH")
+  console.log(response.data);
 
   if (response.data) { 
     const user = JSON.parse(localStorage.getItem("user"));
-    user.accessToken = response.data.accessToken; 
+    user.token = response.data.accessToken; 
     localStorage.setItem("user", JSON.stringify(user));
     return response.data.accessToken; 
   }

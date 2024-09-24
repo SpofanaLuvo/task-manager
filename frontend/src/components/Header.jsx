@@ -1,4 +1,4 @@
-import { FaSignInAlt, FaSignOutAlt, FaUser } from "react-icons/fa";
+import { FaSignInAlt, FaSignOutAlt, FaUser, FaTachometerAlt, FaUserCircle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout, reset } from "../features/auth/authSlice";
@@ -14,24 +14,33 @@ const Header = () => {
     navigate("/");
   };
 
-  console.log("USER FROM THE HEADER")
-
-  // console.log(user)
-  console.log("USER FROM THE HEADER")
-
   return (
     <header className="header">
       <div className="logo">
-        <Link to="/">ADS Task Manager</Link>
+        <Link to="/" className="text-2xl font-bold text-gray-800">ADS Task Manager</Link>
       </div>
       <ul>
         {user ? (
-          <li>
-            <button className="btn" onClick={onLogout}>
-              <FaSignOutAlt />
-              Logout
-            </button>
-          </li>
+          <>
+            <li>
+              <Link to="/">
+                <FaTachometerAlt />
+                Dashboard
+              </Link>
+            </li>
+            <li>
+              <Link to="/profile">
+                <FaUserCircle />
+                Profile
+              </Link>
+            </li>
+            <li>
+              <button className="btn" onClick={onLogout}>
+                <FaSignOutAlt />
+                Logout
+              </button>
+            </li>
+          </>
         ) : (
           <>
             <li>

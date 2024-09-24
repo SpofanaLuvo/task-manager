@@ -9,7 +9,6 @@ const TaskList = ({ tasks }) => {
   return (
     <div className='overflow-x-auto'>
       <table className='table w-full'>
-        {/* head */}
         <thead>
           <tr>
             <th>Task ID</th>

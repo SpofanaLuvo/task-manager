@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { register, reset } from "../features/auth/authSlice";
-import Spinner from '../components/Spinner';
+import Spinner from "../components/Spinner";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -12,7 +12,7 @@ const Register = () => {
     email: "",
     password: "",
     password2: "",
-    membership_plan: ""
+    membership_plan: "",
   });
 
   const { username, email, password, password2, membership_plan } = formData;
@@ -28,8 +28,8 @@ const Register = () => {
       toast.error(message);
     }
 
-    if (isSuccess || user) {
-      navigate('/');
+    if (user) {
+      navigate("/");
     }
 
     dispatch(reset());
@@ -52,7 +52,7 @@ const Register = () => {
         username,
         email,
         password,
-        membership_plan
+        membership_plan,
       };
       dispatch(register(userData));
     }
@@ -101,14 +101,27 @@ const Register = () => {
               value={membership_plan}
               onChange={onChange}
             >
-              <option value="" disabled>Select your membership plan</option>
+              <option value="" disabled>
+                Select your membership plan
+              </option>
               <option value="Basic">Basic</option>
               <option value="Premium">Premium</option>
               <option value="VIP">VIP</option>
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
               </svg>
             </div>
           </div>
@@ -145,6 +158,6 @@ const Register = () => {
       </section>
     </>
   );
-}
+};
 
 export default Register;

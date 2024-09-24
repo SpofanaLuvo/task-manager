@@ -23,15 +23,9 @@ const Task = ({ task }) => {
       ...taskToEdit
     };
 
-    console.log("UPDATED TASK FROM EDIT")
-    console.log(updatedTask)
-
-    console.log("UPDATED TASK FROM EDIT")
-
-
     await editTask(updatedTask);
     setOpenModalEdit(false);
-    navigate(0); // Refresh the page after editing the task
+    navigate(0);
   };
 
   const handleInputChange = (e) => {
@@ -43,10 +37,9 @@ const Task = ({ task }) => {
   };
 
   const handleDeleteTask = async (id) => {
-    console.log("ATEMPTING TO DELETE TASK WITH ID", id)
     await deleteTask(id);
     setOpenModalDelete(false);
-    navigate(0); // Refresh the page after deleting the task
+    navigate(0);
   };
 
   return (
